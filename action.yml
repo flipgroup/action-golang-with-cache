@@ -1,0 +1,26 @@
+name: Golang with cache
+
+inputs:
+  version:
+    description: Golang version.
+    required: true
+  cache-key-suffix:
+    description: Optional cache key suffix.
+    default:
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Golang
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ inputs.version }}
+    - name: Setup Golang caches
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cache/go-build
+          ~/go/pkg/mod
+        key: ${{ runner.os }}-golang${{ inputs.cache-key-suffix }}-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-golang${{ inputs.cache-key-suffix }}-
