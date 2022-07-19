@@ -3,7 +3,8 @@ name: Golang with cache
 inputs:
   version:
     description: Golang version.
-    required: true
+  version-file:
+    description: Golang version from go.mod. Used in place of `version`.
   cache-key-suffix:
     description: Optional cache key suffix.
     default:
@@ -15,12 +16,19 @@ runs:
       uses: actions/setup-go@v3
       with:
         go-version: ${{ inputs.version }}
-    - name: Setup Golang caches
+        go-version-file: ${{ inputs.version-file }}
+    - name: Determine cache paths
+      id: golang-path
+      run: |
+        echo "::set-output name=build::$(go env GOCACHE)"
+        echo "::set-output name=module::$(go env GOMODCACHE)"
+      shell: bash
+    - name: Setup Golang cache
       uses: actions/cache@v3
       with:
         path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
+          ${{ steps.golang-path.outputs.build }}
+          ${{ steps.golang-path.outputs.module }}
         key: ${{ runner.os }}-golang${{ inputs.cache-key-suffix }}-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-golang${{ inputs.cache-key-suffix }}-
