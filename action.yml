@@ -13,22 +13,26 @@ runs:
   using: composite
   steps:
     - name: Setup Golang
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v4
       with:
+        cache: false
         go-version: ${{ inputs.version }}
         go-version-file: ${{ inputs.version-file }}
-    - name: Determine cache paths
-      id: golang-path
+    - name: Determine cache paths/cache key
+      id: vars
       run: |
         echo "build=$(go env GOCACHE)" >>"$GITHUB_OUTPUT"
         echo "module=$(go env GOMODCACHE)" >>"$GITHUB_OUTPUT"
+        cacheKeyRoot="${{ runner.os }}-golang${{ inputs.cache-key-suffix && '-' }}${{ inputs.cache-key-suffix }}-"
+        echo "cache-key-restore=$cacheKeyRoot" >>"$GITHUB_OUTPUT"
+        echo "cache-key=${cacheKeyRoot}${{ hashFiles('**/go.sum') }}" >>"$GITHUB_OUTPUT"
       shell: bash
     - name: Setup Golang cache
       uses: actions/cache@v3
       with:
         path: |
-          ${{ steps.golang-path.outputs.build }}
-          ${{ steps.golang-path.outputs.module }}
-        key: ${{ runner.os }}-golang${{ inputs.cache-key-suffix && '-' }}${{ inputs.cache-key-suffix }}-${{ hashFiles('**/go.sum') }}
+          ${{ steps.vars.outputs.build }}
+          ${{ steps.vars.outputs.module }}
+        key: ${{ steps.vars.outputs.cache-key }}
         restore-keys: |
-          ${{ runner.os }}-golang${{ inputs.cache-key-suffix && '-' }}${{ inputs.cache-key-suffix }}-
+          ${{ steps.vars.outputs.cache-key-restore }}
