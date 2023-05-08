@@ -3,8 +3,10 @@ name: Golang with cache
 inputs:
   version:
     description: Golang version.
+    default:
   version-file:
     description: Golang version from go.mod. Used in place of `version`.
+    default:
   cache-key-suffix:
     description: Optional cache key suffix.
     default:
