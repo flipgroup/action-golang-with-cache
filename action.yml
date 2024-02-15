@@ -23,18 +23,19 @@ runs:
     - name: Determine cache paths/cache key
       id: vars
       run: |
-        echo "build=$(go env GOCACHE)" >>"$GITHUB_OUTPUT"
-        echo "module=$(go env GOMODCACHE)" >>"$GITHUB_OUTPUT"
-        cacheKeyRoot="${{ runner.os }}-golang${{ inputs.cache-key-suffix && format('-{0}',inputs.cache-key-suffix) }}-"
+        echo "path-build=$(go env GOCACHE)" >>"$GITHUB_OUTPUT"
+        echo "path-module=$(go env GOMODCACHE)" >>"$GITHUB_OUTPUT"
+
+        cacheKeyRoot="golang-${{ runner.os }}${{ inputs.cache-key-suffix && format('-{0}',inputs.cache-key-suffix) }}-"
         echo "cache-key-restore=$cacheKeyRoot" >>"$GITHUB_OUTPUT"
         echo "cache-key=${cacheKeyRoot}${{ hashFiles('**/go.sum') }}" >>"$GITHUB_OUTPUT"
       shell: bash
     - name: Setup Golang cache
       uses: actions/cache@v3
       with:
-        path: |
-          ${{ steps.vars.outputs.build }}
-          ${{ steps.vars.outputs.module }}
         key: ${{ steps.vars.outputs.cache-key }}
+        path: |
+          ${{ steps.vars.outputs.path-build }}
+          ${{ steps.vars.outputs.path-module }}
         restore-keys: |
           ${{ steps.vars.outputs.cache-key-restore }}
