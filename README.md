@@ -15,6 +15,6 @@ jobs:
         with:
           version-file: go.mod
           # alternatively, use `version` input
-          #version: ~1.20
+          #version: ~1.22
           cache-key-suffix: key-suffix # optional input argument
 ```
