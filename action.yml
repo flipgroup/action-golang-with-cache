@@ -14,15 +14,33 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Set GOTOOLCHAIN
-      run: echo "GOTOOLCHAIN=local" >>"$GITHUB_ENV"
+    - name: Resolve Golang version and set GOTOOLCHAIN
+      id: version
+      run: |
+        semver="${{ inputs.version }}"
+        if [[ -n "${{ inputs.version-file }}" ]]; then
+          if [[ ! -f "${{ inputs.version-file }}" ]]; then
+            echo "::error title=Extract Golang version from file::Requested module file not found: ${{ inputs.version-file }}."
+            exit 1
+          fi
+          goVersion=$(cat "${{ inputs.version-file }}" | grep --extended-regexp "^go +[0-9]")
+          # ignore PATCH component - only consider MAJOR.MINOR
+          if [[ $goVersion =~ ^go\ +([0-9]\.[0-9]+) ]]; then
+            semver=${BASH_REMATCH[1]}
+          else
+            echo "::error title=Extract Golang version from file::Unable to locate valid semver from module file: ${{ inputs.version-file }}."
+            exit 1
+          fi
+        fi
+
+        echo "semver=$semver" >>"$GITHUB_OUTPUT"
+        echo "GOTOOLCHAIN=local" >>"$GITHUB_ENV"
       shell: bash
     - name: Setup Golang
       uses: actions/setup-go@v5
       with:
         cache: false
-        go-version: ${{ inputs.version }}
-        go-version-file: ${{ inputs.version-file }}
+        go-version: ${{ steps.version.outputs.semver }}
     - name: Determine cache paths/cache key
       id: vars
       run: |
