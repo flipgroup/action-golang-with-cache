@@ -37,7 +37,7 @@ runs:
         echo "GOTOOLCHAIN=local" >>"$GITHUB_ENV"
       shell: bash
     - name: Setup Golang
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # @v6.4.0
       with:
         cache: false
         go-version: ${{ steps.version.outputs.semver }}
@@ -52,7 +52,7 @@ runs:
         echo "cache-key=${cacheKeyRoot}${{ hashFiles('**/go.sum') }}" >>"$GITHUB_OUTPUT"
       shell: bash
     - name: Setup Golang cache
-      uses: actions/cache@v4
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # @v5.0.5
       with:
         key: ${{ steps.vars.outputs.cache-key }}
         path: |
