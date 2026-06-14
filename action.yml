@@ -49,7 +49,7 @@ runs:
 
         cacheKeyRoot="golang-${{ runner.os }}${{ inputs.cache-key-suffix && format('-{0}',inputs.cache-key-suffix) }}-"
         echo "cache-key-restore=$cacheKeyRoot" >>"$GITHUB_OUTPUT"
-        echo "cache-key=${cacheKeyRoot}${{ hashFiles('**/go.sum') }}" >>"$GITHUB_OUTPUT"
+        echo "cache-key=${cacheKeyRoot}${{ hashFiles('**/go.mod') }}" >>"$GITHUB_OUTPUT"
       shell: bash
     - name: Setup Golang cache
       uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # @v5.0.5
