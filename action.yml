@@ -20,15 +20,15 @@ runs:
         semver="${{ inputs.version }}"
         if [[ -n "${{ inputs.version-file }}" ]]; then
           if [[ ! -f "${{ inputs.version-file }}" ]]; then
-            echo "::error title=Extract Golang version from file::Requested module file not found: ${{ inputs.version-file }}."
+            echo "::error title=Golang version from module::Requested module file not found: ${{ inputs.version-file }}."
             exit 1
           fi
           goVersion=$(cat "${{ inputs.version-file }}" | grep --extended-regexp "^go +[0-9]")
-          # ignore PATCH component - only consider MAJOR.MINOR
+          # ignore PATCH component, only considering MAJOR.MINOR
           if [[ $goVersion =~ ^go\ +([0-9]\.[0-9]+) ]]; then
             semver=${BASH_REMATCH[1]}
           else
-            echo "::error title=Extract Golang version from file::Unable to locate valid semver from module file: ${{ inputs.version-file }}."
+            echo "::error title=Golang version from module::Unable to determine MAJOR.MINOR semver from module file: ${{ inputs.version-file }}."
             exit 1
           fi
         fi
