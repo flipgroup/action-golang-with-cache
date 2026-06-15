@@ -1,6 +1,6 @@
 # Action Golang with cache
 
-GitHub Action for setting up Golang via [actions/setup-go](https://github.com/actions/setup-go) coupled with [actions/cache](https://github.com/actions/cache) to cache Golang module and build cache directories.
+GitHub Action for setting up Golang via [actions/setup-go](https://github.com/actions/setup-go) coupled with [actions/cache](https://github.com/actions/cache) to cache both Golang module and build cache directories.
 
 ## Usage
 
