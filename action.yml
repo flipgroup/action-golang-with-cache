@@ -8,7 +8,7 @@ inputs:
     description: Golang version from go.mod. Used in place of `version`.
     default:
   cache-key-suffix:
-    description: Optional cache key suffix.
+    description: Optional cache key suffix. Defaults to `default`.
     default:
 
 runs:
@@ -47,7 +47,7 @@ runs:
         echo "path-build=$(go env GOCACHE)" >>"$GITHUB_OUTPUT"
         echo "path-module=$(go env GOMODCACHE)" >>"$GITHUB_OUTPUT"
 
-        cacheKeyRoot="golang-${{ runner.os }}${{ inputs.cache-key-suffix && format('-{0}',inputs.cache-key-suffix) }}-"
+        cacheKeyRoot="golang-${{ runner.os }}-${{ inputs.cache-key-suffix || 'default' }}-"
         echo "cache-key-restore=$cacheKeyRoot" >>"$GITHUB_OUTPUT"
         echo "cache-key=${cacheKeyRoot}${{ hashFiles('**/go.mod') }}" >>"$GITHUB_OUTPUT"
       shell: bash
